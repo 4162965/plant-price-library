@@ -103,6 +103,13 @@ async function listPlants(request, env) {
 async function createPlant(request, env, user) {
   const body = await request.json();
   assert(body.name, "请输入名称");
+  const existing = await env.DB.prepare(
+    "SELECT id FROM plants WHERE name = ? AND COALESCE(category_id, '') = COALESCE(?, '') AND active = 1 LIMIT 1",
+  )
+    .bind(body.name, body.category_id || null)
+    .first();
+  if (existing) return send({ id: existing.id, existed: true });
+
   const id = crypto.randomUUID();
   await env.DB.prepare("INSERT INTO plants (id, name, category_id, cover_url) VALUES (?, ?, ?, ?)")
     .bind(id, body.name, body.category_id || null, body.cover_url || "")
