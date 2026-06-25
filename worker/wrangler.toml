@@ -1,0 +1,16 @@
+name = "plant-price-api"
+main = "src/index.js"
+compatibility_date = "2026-06-25"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "plant-price-db"
+database_id = "55f0bd51-dfe9-4822-8fe8-05b1e357bff8"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "plant-price-images"
+
+[vars]
+PUBLIC_IMAGE_BASE_URL = ""
+SESSION_DAYS = "365"
