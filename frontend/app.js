@@ -15,6 +15,7 @@ const state = {
   selectedSpec: null,
   query: "",
   modal: null,
+  saving: false,
   loading: false,
   demo: false,
 };
@@ -269,8 +270,8 @@ function bottomNav() {
 
 function modal() {
   if (!state.modal) return "";
-  const close = `<button class="ghost-btn" onclick="closeModal()">取消</button>`;
-  const saveText = `<button class="primary-btn" onclick="submitModal()">保存</button>`;
+  const close = `<button type="button" class="ghost-btn" onclick="closeModal()">取消</button>`;
+  const saveText = `<button type="submit" class="primary-btn">${state.saving ? "保存中..." : "保存"}</button>`;
   const categories = state.categories.map((cat) => `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`).join("");
   const forms = {
     category: `<h2>添加分类</h2><label class="field"><span>分类名称</span><input id="categoryName" placeholder="例如 室内植物" /></label>`,
@@ -308,6 +309,8 @@ function closeModal() {
 }
 
 async function submitModal() {
+  if (state.saving) return;
+  state.saving = true;
   try {
     if (state.modal === "category") {
       await api("/api/categories", { method: "POST", body: JSON.stringify({ name: value("categoryName") }) });
@@ -337,6 +340,9 @@ async function submitModal() {
     render();
   } catch (error) {
     alert(error.message);
+  } finally {
+    state.saving = false;
+    render();
   }
 }
 
